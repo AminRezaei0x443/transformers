@@ -2725,7 +2725,7 @@ class Trainer:
 
         return loss.detach()
 
-    def compute_loss(self, model, inputs, return_outputs=False):
+    def compute_loss(self, model, inputs, functional=False, params=None, return_outputs=False):
         """
         How the loss is computed by Trainer. By default, all models return the loss in the first element.
 
@@ -2735,7 +2735,14 @@ class Trainer:
             labels = inputs.pop("labels")
         else:
             labels = None
-        outputs = model(**inputs)
+        if not functional:
+            outputs = model(**inputs)
+        else:
+            if params is None:
+                raise ValueError(
+                    "You should provide model params in `params` kw-arg when functional mode is active."
+                )
+            outputs = torch.func.functional_call(model, params, kwargs=inputs)
         # Save past state if it exists
         # TODO: this needs to be fixed and made cleaner later.
         if self.args.past_index >= 0:
