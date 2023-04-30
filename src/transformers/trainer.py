@@ -2742,7 +2742,7 @@ class Trainer:
                 raise ValueError(
                     "You should provide model params in `params` kw-arg when functional mode is active."
                 )
-            outputs = torch.func.functional_call(model, params, kwargs=inputs)
+            outputs = torch.func.functional_call(model, params, (), kwargs=inputs)
         # Save past state if it exists
         # TODO: this needs to be fixed and made cleaner later.
         if self.args.past_index >= 0:
